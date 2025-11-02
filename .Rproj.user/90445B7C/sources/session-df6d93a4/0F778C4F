@@ -3,7 +3,7 @@
     "path": "~/Downloads/sportsblog/presentations/ presentation.Rmd",
     "project_path": "presentations/ presentation.Rmd",
     "type": "r_markdown",
-    "hash": "616967716",
+    "hash": "4046465355",
     "contents": "",
     "dirty": false,
     "created": 1762112848827.0,
@@ -13,15 +13,15 @@
         "rmdVisualMode": "false",
         "source_window_id": "",
         "Source": "Source",
-        "cursorPosition": "3,18",
-        "scrollLine": "0"
+        "cursorPosition": "11,345",
+        "scrollLine": "9"
     },
     "folds": "",
-    "lastKnownWriteTime": 1762125067,
+    "lastKnownWriteTime": 1762126131,
     "encoding": "UTF-8",
     "collab_server": "",
     "source_window": "",
-    "last_content_update": 1762125067815,
+    "last_content_update": 1762126131587,
     "read_only": false,
     "read_only_alternatives": []
 }
