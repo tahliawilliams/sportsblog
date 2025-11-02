@@ -1,0 +1,135 @@
+
+---
+title: "3rd and 6 Plays"
+author: "Tahlia Williams"
+date: '2025-10-22'
+format: 
+  html:
+    code-fold: true
+---
+
+```{r}
+library(tidyverse)
+ library(lubridate)
+```
+
+## Close Rushing Wins: How Rare Are They?
+
+It is normally rare for football teams to win without running the ball effectively, but through data it isnt impossible. 
+
+Since the 2015 season, fewer than 60% of college football victories have come when the winning team rushed for under 100 yards.
+
+```{r}
+logs <- read_csv("https://dwillis.github.io/sports-data-files/footballlogs1525.csv")
+
+# the Season is the year of the game, except when the game is in January. Then its year-1
+
+logs <- logs |> mutate(Season = case_when(
+  month(Date) == 1 ~ year(Date) - 1, 
+  .default = year(Date)
+))
+
+logs |> select(Date, Season) 
+
+season_games <- logs |> 
+  group_by(Season) |> 
+  summarise(all_games = n())
+
+
+season_games_under_100_wins <- logs |> 
+  filter(Result == "W", RushYds < 100) |> 
+  group_by(Season) |> 
+  summarise(low_rush_wins = n())
+
+low_rush_wins <- season_games |> 
+  inner_join(season_games_under_100_wins, join_by(Season)) |> 
+  mutate(pct_low_rush_wins = low_rush_wins/all_games * 100)
+
+bigten_logs <- logs |> filter(Conference == "Big Ten Conference")
+
+bigten_season_games <- bigten_logs |> 
+  group_by(Season) |> 
+  summarise(all_games = n())
+
+
+bigten_low_rush_wins <- bigten_logs |> 
+  filter(Result == "W", RushYds < 100) |> 
+  group_by(Season) |> 
+  summarise(low_rush_wins = n())
+
+bigten_combined <- left_join(bigten_season_games, bigten_low_rush_wins, by = "Season") |> 
+  mutate(percentage = (low_rush_wins / all_games) * 100)
+
+bigten_combined |> 
+  ggplot(aes(x = Season, y = percentage)) +
+  geom_line(linewidth = 1) +
+  geom_point() +
+  geom_line(data = bigten_combined, aes(x = Season, y = percentage), linewidth = 1) +
+  geom_point(data = bigten_combined, aes(x = Season, y = percentage)) +
+  labs(title = "Rare Rushing Wins: Under 100 Yards to Victory",
+       x = "Season",
+       y = "Percentage of Wins",
+       color = "Group") +
+  theme_minimal()
+
+```
+
+The chart above shows that low-rushing wins make up only a small percentage of all games, with Big Ten teams pulling them off less. The Big Ten is known for its physical, run-heavy style, so when a team wins with fewer than 100 rushing yards, they are going to stand out.
+
+These wins show how the game is evolving toward more pass-first offenses and faster scoring drives, especially in programs willing to lean on their quarterbacks and receivers when the ground game stalls.
+
+```{r}
+team_results <- logs |>
+group_by(Team) |>
+summarise(
+Wins = sum(Result == "W"),
+Losses = sum(Result == "L")
+) |>
+arrange(desc(Wins))
+
+
+season_team_results <- logs |>
+group_by(Season, Team) |>
+summarise(
+Wins = sum(Result == "W"),
+Losses = sum(Result == "L")
+) |> arrange(Season, desc(Wins))
+
+
+maryland_outcomes <- logs |>
+filter(Team == "Maryland") |> 
+group_by(Season, Team) |>
+summarise(
+Wins = sum(Result == "W"),
+Losses = sum(Result == "L")
+) |>
+arrange(Season, desc(Wins))
+
+bigten_results <- bigten_logs |>
+group_by(Season, Team) |>
+summarise(
+Wins = sum(Result == "W"),
+Losses = sum(Result == "L")
+) |>
+arrange(Season, desc(Wins))
+
+
+maryland_results <- bigten_results |> filter(Team == "Maryland")
+
+
+
+
+ggplot(maryland_outcomes, aes(x = Season)) +
+geom_col(aes(y = Wins), fill = "blue") +
+geom_col(aes(y = -Losses), fill = "red") +
+labs(
+title = "Maryland Football Wins and Losses by Season",
+x = "Season", y = "Wins (above) / Losses (below)"
+) +
+theme_minimal()
+
+```
+While running the ball still matters, modern offenses prove that efficiency and balance—not just total yards—decide close games.
+
+
+

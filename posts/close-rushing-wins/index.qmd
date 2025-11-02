@@ -1,0 +1,39 @@
+---
+title: "3rd and 6 Plays"
+author: "Tahlia Williams"
+date: '2025-10-22'
+format: 
+  html:
+    code-fold: true
+---
+
+```{r}
+library(tidyverse)
+library(lubridate)
+```
+
+```{r}
+logs <- read_csv("https://dwillis.github.io/sports-data-files/footballlogs1525.csv")
+```
+```{r}
+logs <- logs |> mutate(Season = case_when(
+  month(Date) == 1 ~ year(Date) - 1, 
+  .default = year(Date)
+))
+
+logs |> select(Date, Season) 
+
+season_games <- logs |> 
+  group_by(Season) |> 
+  summarise(all_games = n())
+
+season_games_under_100_wins <- logs |> 
+  filter(Result == "W", RushYds < 100) |> 
+  group_by(Season) |> 
+  summarise(low_rush_wins = n())
+```
+
+```{r}
+
+```
+

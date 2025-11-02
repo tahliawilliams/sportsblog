@@ -1,0 +1,27 @@
+"0","interceptions_per_game_clean <- interceptions_per_game |> "
+"0","  rename("
+"0","    Rank = Rank,"
+"0","    Team = Team,"
+"0","    pfd_perGame_2025 = `2025`,"
+"0","    PFD_Last3 = `Last 3`,"
+"0","    PFD_Last1 = `Last 1`,"
+"0","    PFD_Home = Home,"
+"0","    PFD_Away = Away,"
+"0","    pfd_perGame_2024 = `2024`"
+"0","  ) "
+"0","  mutate"
+"1","function (.data, ...) 
+"
+"1","{
+"
+"1","    UseMethod(""mutate"")
+"
+"1","}
+"
+"1","<bytecode: 0x10902e9b0>
+"
+"1","<environment: namespace:dplyr>
+"
+"0","    "
+"0",""
+"0","head(interceptions_per_game_clean)"

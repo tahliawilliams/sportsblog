@@ -1,0 +1,6 @@
+"0","penalty_first_downs_clean |> "
+"0","  ggplot(aes(x = pfd_per_game_2024, y = pfd_per_game_2025)) +"
+"0","  geom_point() +"
+"0","  geom_abline(slope = 1, intercept = 0, linetype = ""dashed"") +"
+"0","  labs(title = ""Penalty First Downs: 2024 vs 2025"")"
+"0",""

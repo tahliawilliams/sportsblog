@@ -1,0 +1,7 @@
+"0","Football_data |> "
+"0","  ggplot(aes(x = Outcome, fill = Outcome)) +"
+"0","  geom_bar() +"
+"0","  labs(title = ""Distribution of Game Outcomes"","
+"0","       x = ""Outcome"","
+"0","       y = ""Number of Games"") +"
+"0","  theme_minimal()"

@@ -1,0 +1,3 @@
+"0","num_run_plays <-nrow(run_plays)"
+"0","total_third_and_six <- nrow(third_and_six)"
+"0","percentage_runs <- (num_run_plays / total_third_and_six) * 100"

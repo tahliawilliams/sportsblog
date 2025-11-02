@@ -1,0 +1,39 @@
+"0","penalty_data_clean_24_25 <- penalty_data |> "
+"0","  rename("
+"0","    Rank = Rank,"
+"0","    Team = Team,"
+"0","    PenaltyYards2025 = `2025`,"
+"0","    Last3 = `Last 3`,"
+"0","    Last1 = `Last 1`,"
+"0","    Home = Home,"
+"0","    Away = Away,"
+"0","    PenaltyYards2024 = `2024`"
+"0","  ) "
+"0","  mutate"
+"1","function (.data, ...) 
+"
+"1","{
+"
+"1","    UseMethod(""mutate"")
+"
+"1","}
+"
+"1","<bytecode: 0x10902e9b0>
+"
+"1","<environment: namespace:dplyr>
+"
+"0","penalty_data_clean_24_25 <- penalty_data_clean_24_25 "
+"0","  mutate"
+"1","function (.data, ...) 
+"
+"1","{
+"
+"1","    UseMethod(""mutate"")
+"
+"1","}
+"
+"1","<bytecode: 0x10902e9b0>
+"
+"1","<environment: namespace:dplyr>
+"
+"0","head(penalty_data_clean_24_25)"

@@ -1,0 +1,6 @@
+"0","top_teams <- runs_by_team_year |> "
+"0","  group_by(pos_team) |> "
+"0","  summarise(total = sum(run_plays)) |> "
+"0","  arrange(desc(total)) |> "
+"0","  head(10) |> "
+"0","  pull(pos_team)"

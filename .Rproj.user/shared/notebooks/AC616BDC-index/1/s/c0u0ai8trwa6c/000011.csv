@@ -1,0 +1,8 @@
+"0",""
+"0","library(cfbfastR)"
+"0","library(tidyverse)"
+"0",""
+"0","pbp_data <- load_cfb_pbp (seasons = 2021 :2025)  "
+"0","third_and_six <- pbp_data |> "
+"0","  filter(down == 3, distance == 6)"
+"0","  "

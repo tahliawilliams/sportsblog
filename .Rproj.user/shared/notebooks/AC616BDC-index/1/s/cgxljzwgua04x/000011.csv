@@ -1,0 +1,4 @@
+"0","play_type <- third_and_six |> "
+"0","  group_by(play_type) |> "
+"0","  summarise(count = n()) |> "
+"0","  arrange(desc(count))"

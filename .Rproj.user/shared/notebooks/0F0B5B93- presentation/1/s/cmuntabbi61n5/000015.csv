@@ -1,0 +1,7 @@
+"0","webpage <- read_html(url)"
+"0",""
+"0","points_per_game <- webpage |> "
+"0","  html_element(""table"") |> "
+"0","  html_table()"
+"0",""
+"0","head(points_per_game)"

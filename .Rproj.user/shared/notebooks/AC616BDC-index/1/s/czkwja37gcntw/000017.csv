@@ -1,0 +1,6 @@
+"0","runs_by_team_year <- third_and_six |> "
+"0","  filter(play_type == ""Rush"") |> "
+"0","  group_by(year, pos_team) |> "
+"0","  summarise(run_plays = n()) |> "
+"0","  arrange(year, desc(run_plays))"
+"0","  "

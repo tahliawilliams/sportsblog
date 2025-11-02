@@ -1,0 +1,141 @@
+
+---
+title: "3rd and 6 Plays"
+author: "Tahlia Williams"
+date: '2025-10-22'
+format: 
+  html:
+    code-fold: true
+---
+
+```{r}
+options(repos = c(CRAN = "https://cloud.r-project.org/"))
+install.packages("cfbfastR")
+library(tidyverse)
+install.packages("remotes")
+remotes::install_github("saiemgilani/cfbfastR")
+library(cfbfastR)
+```
+```{r}
+
+library(cfbfastR)
+library(tidyverse)
+
+pbp_data <- load_cfb_pbp (seasons = 2021 :2025)  
+third_and_six <- pbp_data |> 
+  filter(down == 3, distance == 6)
+  
+```
+
+```{r}
+play_type <- third_and_six |> 
+  group_by(play_type) |> 
+  summarise(count = n()) |> 
+  arrange(desc(count))
+```
+
+
+```{r}
+run_plays <- third_and_six |> 
+  filter(play_type == "Rush")
+```
+
+```{r}
+num_run_plays <-nrow(run_plays)
+total_third_and_six <- nrow(third_and_six)
+percentage_runs <- (num_run_plays / total_third_and_six) * 100
+```
+
+```{r}
+avg_yards_runs <- mean(run_plays$yards_gained)
+```
+
+
+```{r}
+runs_by_team_year <- third_and_six |> 
+  filter(play_type == "Rush") |> 
+  group_by(year, pos_team) |> 
+  summarise(run_plays = n()) |> 
+  arrange(year, desc(run_plays))
+  
+```
+```{r}
+most_runs_by_team <- runs_by_team_year |> 
+  group_by(pos_team) |> 
+  summarise(total_runs = sum(run_plays)) |> 
+  arrange(desc(total_runs)) |> 
+  slice(1)
+
+total_runs_by_year <- runs_by_team_year  |> 
+  group_by(year) |> 
+  summarize(total_runs = sum(run_plays))
+```
+
+```{r}
+maryland_third_and_six <- third_and_six |> 
+  filter(pos_team == "Maryland")
+
+maryland_runs <- maryland_third_and_six |> 
+  filter(play_type == "Rush")
+
+num_maryland_runs <- nrow(maryland_runs)
+total_maryland_third_and_six <- nrow(maryland_third_and_six)
+percentage_maryland_runs <- (num_maryland_runs / total_maryland_third_and_six) *100
+avg_yards_maryland_runs <- mean(maryland_runs$yards_gained)
+```
+
+
+```{r}
+total_maryland_runs <- sum(maryland_runs$rush)
+
+head(maryland_runs)
+```
+
+
+```{r}
+top_teams <- runs_by_team_year |> 
+  group_by(pos_team) |> 
+  summarise(total = sum(run_plays)) |> 
+  arrange(desc(total)) |> 
+  head(10) |> 
+  pull(pos_team)
+```
+
+```{r}
+runs_chart_data <- runs_by_team_year |> 
+  filter(pos_team %in% top_teams)
+```
+
+
+```{r}
+ggplot(runs_chart_data, aes(x = reorder(pos_team, -run_plays), y = run_plays, fill = as.factor(year))) +
+  geom_bar(stat = "identity", position = "dodge") +
+  labs(
+    title = "Runs on 3rd and 6 by Top Teams (2021–2025)",
+    x = "Team",
+    y = "Number of Runs",
+    fill = "Year"
+  ) +
+  theme_minimal() +
+  coord_flip()
+
+```
+
+Reading the Graph: 
+Teams like Florida State, Ole Miss, Michigan, UNLV, New Mexico, Baylor, West Virginia, Air Force, Navy, and Army are listed on the y axis. The x axis represents the number of runs on 3rd and 6 plays, and each color represents a year. Army has shown to have the highest number of runs in 2021, with over 15 runs. Baylor has also had a standout year in 2021 with 13-14 runs. Navy (2022) and Air Force (2023) show high counts around 13. Most teams fluctuate totals from year to year, reflecting new play calling trends. Lastly, Florida State, Ole Miss, and Michigan have lower totals compared to other schools. 
+Across 2021-2025, there were over 16,000 3rd and 6 plays in college football. The most common play types were passes, runs, and few punts along woth other calls like field goals and sacks. 
+
+Teams ran the ball over 3,000 times on 3rd and 6, making up about 25% of plays. The average yards gained on these runs was just 2.8, failing to convert. This would suggest that teams use runs to set up a succesful 4th down. 
+
+Running on 3rd and 6 isn't ideal. But some teams take advantage of it more than others. From the data, the top runners include service academies like Army (16 in 2021), Air Force (12 in 2023), and Navy (16 in 2022), along with teams like Baylor (16 in 2021), and UNLV (9 in 2022 and 2024). These teams ran the ball frequenty and this could be because of other options or heavy running plays. 
+
+Runs peaked in 2024 with 829 run plays and dropped in 2025 with 487 total running plays, possibly due to changing strategies or rules. 
+
+Army leads the group with 44 total runs accross the seasons, followed by Navy and Airforce. Powerhouse offenses with strong rushing players tend to run more, while pass heavy teams like Cleamson run less frequently. 
+
+Maryland has had 75 total 3rd and 6 plays from 2021-2025. They ran 15 17 times and gained 2.5 yards. Maryland had 4 run plays in 2021, 6 in 2022, 4 in 2023, 2 in 2024, and 1 in 2025. They have shown a clear downward trend since 2021, with fewer runs in recent years. Maryland's game has changed and they have become more conservative, more likely passing or punting more to avoid the risk of a loss like the Washington game. 
+
+Overall, running on 3rd and 6 is a risky, low reward play that can pay off or also lead to worse. Teams like Army, Navy, and Air Force run it most, while Maryland has dialed it back since 2021. 
+
+
+

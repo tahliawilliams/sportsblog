@@ -1,0 +1,8 @@
+"0","url <- ""https://www.teamrankings.com/college-football/stat/yards-per-point"""
+"0","webpage <- read_html(url)"
+"0",""
+"0","yards_per_point <- webpage |> "
+"0","  html_element(""table"") |> "
+"0","  html_table()"
+"0",""
+"0","head(yards_per_point)"
