@@ -1,39 +1,92 @@
 ---
-title: "3rd and 6 Plays"
+title: "Winning Without the Run "
 author: "Tahlia Williams"
 date: '2025-10-22'
 format: 
   html:
     code-fold: true
 ---
+### 2015 to the Present 
+
+In college football, ground games are always considered a success. But the past decade shows that teams can still win without it. Since 2015, fewer than 6% of all football games have been won by teams rushing for fewer than 100 yards. Even though they are rare, low rush wins have become more common in recent years. 
 
 ```{r}
 library(tidyverse)
 library(lubridate)
+
+games <- read_csv("https://dwillis.github.io/sports-data-files/footballlogs1525.csv")
+
+games_clean <- games |> 
+  mutate(
+    season = year(ymd(Date)),
+    result = ifelse(str_detect(Result, "W"), "W", "L")) |> 
+      select(season, Team, Conference, RushYds, result)
+
+games_per_season <- games_clean |> 
+  group_by(season) |> 
+  summarise(TotalGames = n())
+  
+low_rush_wins <- games_clean |>
+  filter(result == "W", RushYds <100) |> 
+  group_by(season) |> 
+  summarise(LowRushWins = n())
+
+season_summary <- games_per_season |> 
+  left_join(low_rush_wins, by = join_by(season)) |> 
+  mutate(
+    LowRushWins = replace_na(LowRushWins, 0), PctLowRushWins = 100 * LowRushWins/TotalGames)
 ```
 
 ```{r}
-logs <- read_csv("https://dwillis.github.io/sports-data-files/footballlogs1525.csv")
+ggplot(season_summary, aes(x = season, y = PctLowRushWins)) +
+geom_line(color = "#b22222", size = 1.2) +
+geom_point(color = "#b22222", size = 2) +
+labs(
+title = "Winning Without the Run Game (2015–Present)",
+subtitle = "Percentage of all FBS games won with fewer than 100 rushing yards",
+x = "season",
+y = "Percent of Wins"
+) +
+theme_minimal(base_size = 14)
+
 ```
-```{r}
-logs <- logs |> mutate(Season = case_when(
-  month(Date) == 1 ~ year(Date) - 1, 
-  .default = year(Date)
-))
-
-logs |> select(Date, Season) 
-
-season_games <- logs |> 
-  group_by(Season) |> 
-  summarise(all_games = n())
-
-season_games_under_100_wins <- logs |> 
-  filter(Result == "W", RushYds < 100) |> 
-  group_by(Season) |> 
-  summarise(low_rush_wins = n())
-```
+The trend peaked in 2021, when over 6% of victories came from teams that struggled on the ground. After reaching the highest number in the last decade, this number has remained steady, maintaining 5 to 6% through 2025.
 
 ```{r}
+big_ten_summary <- games_clean |> 
+filter(str_detect(Conference, "Big Ten")) |> 
+group_by(season) |> 
+summarise(TotalGames = n()) |> 
+left_join(
+games_clean |> 
+filter(str_detect(Conference, "Big Ten"), result == "W", RushYds < 100) |> 
+group_by(season) |> 
+summarise(LowRushWins = n()),
+by = join_by(season)
+) |> 
+mutate(
+LowRushWins = replace_na(LowRushWins, 0),
+PctLowRushWins = 100 * LowRushWins / TotalGames
+)
+
+ggplot() +
+geom_line(data = season_summary,
+aes(x = season, y = PctLowRushWins, color = "All Teams"), size = 1) +
+geom_line(data = big_ten_summary,
+aes(x = season, y = PctLowRushWins, color = "Big Ten Teams"), size = 1) +
+labs(
+title = "Low-Rushing Wins: Big Ten vs. National Trends",
+x = "season",
+y = "Percent of Wins",
+color = "Category"
+) +
+theme_minimal(base_size = 14)
 
 ```
 
+When focusing on the Big Ten, the numbers show a different story. The Big Ten is known for their physical, run heavy offenses, the conference has still seen its fair share of low rushing wins. In 2021, Big Ten teams won almost 10.5% of their games while rushing for fewer than 100 yards. 
+
+Since then, the Big Ten's percentage has declined but still continues to sit above the overall average, showing that even in a run dominant league, teams are finding ways to win through the air. 
+
+## How the Numbers Were Calculated
+Data was collected from football game logs between 2015 and 2025, filtering for games where the winning team recorded fewer than 100 rushing yards. Each season's total number of games and wins were numbered to determine the percentage of low rushing wins. The same process was repeated for the Big Ten teams to compare conference and national trends.  
