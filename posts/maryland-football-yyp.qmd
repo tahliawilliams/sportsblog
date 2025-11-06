@@ -1,0 +1,113 @@
+---
+title: "Maryland's Yards Per Play Trends Reveal a Decade of Middle Ground Football"
+author: "Tahlia Williams"
+date: '2025-11-04'
+image: "image.png"
+format: 
+  html:
+    code-fold: true
+---
+
+For the past decade, Maryland football has found itself hovering near the middle of groups. Using yards per play (YPP) data from 2015 through 2025, we can see how the Terrapins balance between offensive and defensive efficiency has shifted season to season, yet remained close to the average. 
+```{r}
+library(tidyverse)
+library(ggrepel)
+
+logs <- read_csv("https://dwillis.github.io/sports-data-files/footballlogs1525.csv")
+
+winlosslogs <- logs |> 
+  mutate(
+    wins = case_when(
+      grepl("W", Outcome) ~ 1, 
+      grepl("L", Outcome) ~ 0
+    )
+  )
+
+ypp <- winlosslogs |> 
+  group_by(TeamFull, Season) |> 
+  summarise(
+    TotalPlays = sum(TotalPlays),
+    TotalYards = sum(TotalYds),
+    DefPlays = sum(DefTotalPlays),
+    DefYards = sum(DefTotalYds),
+    TotalWins = sum(wins)
+  ) |> 
+  mutate(
+    OffensiveYPP = TotalYards / TotalPlays,
+    DefensiveYPP = DefYards / DefPlays
+  )
+
+maryland <- winlosslogs |> 
+  filter(TeamFull == "Maryland Terrapins")
+
+maryland_ypp <- logs |> 
+  filter(TeamFull == "Maryland Terrapins") |> 
+  group_by(Season) |> 
+  summarise(
+    TotalPlays = sum(TotalPlays),
+    TotalYards = sum(TotalYds),
+    DefPlays = sum(DefTotalPlays),
+    DefYards = sum(DefTotalYds),
+    TotalWins = sum(Outcome == "W")
+  ) |> 
+  mutate(
+    OffensiveYPP = TotalYards / TotalPlays,
+    DefensiveYPP = DefYards / DefPlays
+  )
+
+averages <- winlosslogs |> 
+  group_by(TeamFull, Season) |> 
+  summarise(
+    TotalPlays = sum(TotalPlays),
+    TotalYards = sum(TotalYds),
+    DefPlays = sum(DefTotalPlays),
+    DefYards = sum(DefTotalYds),
+    TotalWins = sum(Outcome == "W")
+  ) |> 
+  mutate(
+    OffensiveYPP = TotalYards / TotalPlays,
+    DefensiveYPP = DefYards / DefPlays
+  ) |> 
+  ungroup() |> 
+  summarise(
+    offensive_avg = mean(OffensiveYPP), defensive_avg = mean(DefensiveYPP)
+  )
+
+off_avg <- averages$offensive_avg
+def_avg <- averages$defensive_avg
+```
+
+Each dot on the chart below represents a Maryland season, with its offensive YPP on the x axis and defensive YPP on the y axis. Larger circles indicate more wins, and the black lines mark the averages accross teams and seasons. (5.76 offensive YPP and 5.63 offensive YPP). 
+```{r}
+ggplot() + 
+  geom_point(
+    data=ypp, 
+    aes(x=OffensiveYPP, y=DefensiveYPP, size=TotalWins), 
+    color="grey", 
+    alpha=.5) + 
+  geom_point(
+    data=maryland_ypp, 
+    aes(x=OffensiveYPP, y=DefensiveYPP, size=TotalWins), 
+    color="red") + 
+  geom_vline(xintercept = 5.76) + 
+  geom_hline(yintercept = 5.63) +
+  geom_text_repel(
+    data=maryland_ypp, 
+    aes(x=OffensiveYPP, y=DefensiveYPP, label=Season)
+  )+
+  labs(title="A Step Back for Maryland", subtitle="The Terps offense and defense puts it among the worst teams in the conference.", caption="Source: NCAA | By Derek Willis")  + theme_minimal() + 
+  theme(
+    plot.title = element_text(size = 16, face = "bold"),
+    axis.title = element_text(size = 8), 
+    plot.subtitle = element_text(size=10), 
+    panel.grid.minor = element_blank()
+    )
+```
+## A Decade in the Middle
+2015-2017: The Terps' struggled to find rhythm on either side of the ball, sitting below average offensively and defensively, translating to just three or four wins a year despite 6 in 2016.
+2018-2021: Maryland's offense improved, especially in 2018 (6.13 YPP) and 2021 (6.24 YPP), bringing them closer to competitive territory. However, defensive problems with opponents averaging over 5.7 yards oer play kept the team near the middle. 
+2022-2023: these are arguable Maryland;s most balanced seasons, with defensive YPP dipping under 5.0 and the team earning eight wins each year, marking a rare pairing of efficiency and results. 
+2024-2025: A regression followed with offensive production dipping below average. Although the defense steadied in 2025, the year's data is incomplete. 
+
+##What it All Means
+Maryland's placement on the grid underscores the pattern of efficiency around the national average. This has made the Terps good enough for bowl eligibility but rarely making in impact within Big Ten teams. If Maryland can pair its occasional offensive bursts with the defensive discipline of 2022-2023, the next data point might finally land above the lines and into competitive story

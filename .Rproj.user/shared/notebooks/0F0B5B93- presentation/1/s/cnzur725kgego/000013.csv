@@ -1,8 +1,0 @@
-"0","url <- ""https://www.teamrankings.com/college-football/stat/interceptions-thrown-per-game"""
-"0","webpage <- read_html(url)"
-"0",""
-"0","interceptions_per_game <- webpage |> "
-"0","  html_element(""table"") |> "
-"0","  html_table()"
-"0",""
-"0","head(interceptions_per_game)"
